@@ -24,3 +24,7 @@ Data/BiomassItaly2020.tif
 .Rproj.user
 biomass_complete_data.csv
 biomass_complete_data_with_bg.csv
+biomass_complete_data_deltaABG.csv
+biomass_complete_data_with_bg_deltaABG.csv
+biomass_complete_data_delta.csv
+biomass_complete_data_with_bg_delta.csv

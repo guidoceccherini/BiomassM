@@ -1,0 +1,10 @@
+biogeoregion_label,forest_type_label,n_pixels,mean_biomass,median_biomass,sd_biomass,q25,q75,min_biomass,max_biomass
+Alpine,Broadleaf,152848,136.56,131.02,59.84,90.37,176.33,10.29,349.54
+Alpine,Mixed Forest,98323,172.09,172.97,60.11,128.56,216.56,12.48,351
+Alpine,Needleleaf,482480,191.85,195.46,53.65,157.15,230.23,10.41,351
+Continental,Broadleaf,292645,100.16,98.06,44.67,65.61,130.79,10,290.96
+Continental,Mixed Forest,13408,139.71,139.48,50.21,104.51,175.58,14.23,290.22
+Continental,Needleleaf,12532,149.19,147.34,48.69,119.3,182.78,12.18,291.03
+Mediterranean,Broadleaf,1005224,97.51,92.79,41.91,66.41,123.86,10.04,338.44
+Mediterranean,Mixed Forest,94076,108.16,102.05,49.83,71.27,138.22,10.02,334.72
+Mediterranean,Needleleaf,117868,112.86,103.09,54.55,76.23,138.11,10.38,337.49
