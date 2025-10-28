@@ -22,3 +22,5 @@ Data/BiomassItaly2010.tif
 Data/EEA_forest_type_cropped.tif
 Data/BiomassItaly2020.tif
 .Rproj.user
+biomass_complete_data.csv
+biomass_complete_data_with_bg.csv

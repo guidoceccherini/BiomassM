@@ -5,3 +5,8 @@ BiogeoRegions2016.shp
 BiogeoRegions2016.shx
 BiogeoRegions2016.sqlite
 grid_forest.gpkg
+BG_raster.tif
+Biomass2010_aligned.tif
+EEA_forest_type_aligned.tif
+BG_numeric.tif
+biomass_summary_by_biogeoregion_forest.csv
