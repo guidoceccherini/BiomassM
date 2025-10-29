@@ -34,7 +34,7 @@ Hex <- st_read('Data/grid_forest.gpkg')
 
 # open Senf dataset of disturbances
 
-# Disturbances <- rast('Data/italy/annual_disturbances_1985_2023_italy.tif')
+Disturbances <- rast('Data/italy/annual_disturbances_1985_2023_italy.tif')
 
 # # Identify which layers correspond to 2015-2020
 # # Assuming layer 1 = 1985, layer 2 = 1986, etc.
@@ -43,6 +43,7 @@ Hex <- st_read('Data/grid_forest.gpkg')
 
 # # Extract layers for 2015-2020 (layers 31-36)
 # disturbances_2015_2020 <- Disturbances[[31:36]]
+# disturbances_2011_2023 <- Disturbances[[27:39]]
 
 # # Check layer names to confirm
 # names(disturbances_2015_2020)
@@ -50,19 +51,36 @@ Hex <- st_read('Data/grid_forest.gpkg')
 # # Create binary raster: 1 if ANY disturbance in 2015-2020, 0 otherwise
 # # # Method 1: Using max() - if any layer has a value > 0
 # disturbance_binary <- max(disturbances_2015_2020, na.rm = TRUE)
-
+# disturbance_binary11_23 <- max(disturbances_2011_2023, na.rm = TRUE)
+# disturbance_binaryAll <- max(Disturbances, na.rm = TRUE)
 # # Convert to binary (1 if disturbed, 0 if not)
 # disturbance_binary <- ifel(disturbance_binary > 0, 1, 0)
+# disturbance_binary11_23 <- ifel(disturbance_binary11_23 > 0, 1, 0)
 
 # # Check result
 # disturbance_binary
 # plot(disturbance_binary, main = "Disturbances 2015-2020 (1 = disturbed)")
+# plot(disturbance_binary11_23, main = "Disturbances 2011-2023 (1 = disturbed)")
 
 
 # # Save the output
 # writeRaster(disturbance_binary, 
 #             "Data/italy/disturbance_binary_2015_2020.tif",
 #             overwrite = TRUE)
+
+# writeRaster(disturbance_binary11_23,
+#             "Data/italy/disturbance_binary_2011_2023.tif",
+#             overwrite = TRUE)
+
+
+# undisturbed pixels
+# ForestMask <- rast('Data/italy/forest_mask_italy.tif')
+# 
+# undisturbed <- ifel(disturbance_binaryAll > 0, NA, ForestMask)
+# writeRaster(undisturbed,
+#             "Data/italy/undisturbed.tif",
+#             overwrite = TRUE)
+
 
 
 disturbance_binary <- rast("Data/italy/disturbance_binary_2015_2020.tif")

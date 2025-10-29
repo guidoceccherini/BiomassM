@@ -14,3 +14,13 @@ Biomass2020_aligned.tif
 biomass_summary_by_biogeoregion_forest_AGBLOSS.csv
 biomass_summary_by_biogeoregion_forest_AGBLOSSDrivers.csv
 disturbance_agents_2015_2020_filtered.tif
+italy
+biomass_broadleaf_needleleaf_map.png
+biomass_by_hexagon_complete.csv
+biomass_by_hexagon_map.png
+biomass_by_hexagon_summary.csv
+biomass_by_hexagon_total.csv
+example_hexagon_biomass_density.png
+grid_forest_with_biomass.gpkg
+grid_forest_with_biomassType.gpkg
+hexagon_biomass_distribution_faceted.png
