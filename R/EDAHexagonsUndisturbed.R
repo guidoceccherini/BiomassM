@@ -369,7 +369,7 @@ map_biomass <- tm_shape(Hex_with_biomass) +
           palette = "YlOrRd",
           title = "Mean Biomass\n(Mg/ha)") +
   tm_borders(alpha = 0.3) +
-  tm_layout(title = "Total Disturbed Biomass by Hexagon",
+  tm_layout(title = "Total Unisturbed Biomass by Hexagon",
             legend.outside = TRUE)
 
 print(map_biomass)
@@ -393,7 +393,7 @@ map_biomass_two_facets <- tm_shape(Hex_two_types) +
   tm_facets(by = "forest_type_label", 
             nrow = 1,
             free.coords = FALSE) +
-  tm_layout(title = "Total Disturbed Biomass: Broadleaf vs Needleleaf",
+  tm_layout(title = "Total Unisturbed Biomass: Broadleaf vs Needleleaf",
             legend.outside = TRUE,
             panel.labels = c("Broadleaf", "Needleleaf", "Mixed Forest"))
 

@@ -24,3 +24,8 @@ example_hexagon_biomass_density.png
 grid_forest_with_biomass.gpkg
 grid_forest_with_biomassType.gpkg
 hexagon_biomass_distribution_faceted.png
+biomass_by_hexagon_completeUndisturbed.csv
+biomass_by_hexagon_summaryUndisturbed.csv
+biomass_by_hexagon_totalUndisturbed.csv
+grid_forest_with_biomassTypeUndisturbed.gpkg
+grid_forest_with_biomassUndisturbed.gpkg
