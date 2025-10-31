@@ -226,7 +226,13 @@ if(!"hex_ID" %in% names(Hex_italy)) {
 
 
 
+# st_write(Hex_italy |> select(-hex_id),'Data/Hexs/Hex_italy.gpkg')
 
+
+
+
+
+library(data.table)
 
 
 # ============================================================================
