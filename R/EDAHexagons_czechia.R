@@ -98,8 +98,8 @@ czechia_crs <- crs(disturbance_binary)
 
 # 2) Reproject the extent to Biomass2019 CRS
 czechia_extent_transformed <- project(czechia_extent, 
-                                    from = czechia_crs, 
-                                    to = crs(Biomass2010))
+                                      from = czechia_crs, 
+                                      to = crs(Biomass2010))
 
 # 3) Crop Biomass2010 using the transformed extent (fast!)
 Biomass2010_cropped <- crop(Biomass2010, czechia_extent_transformed)
@@ -162,9 +162,6 @@ print(Biomass2010_cropped)
 print(disturbance_binary)
 print(EEA_forest_type_cropped)
 
-# Step 1: Reproject all rasters to a common CRS and resolution
-# Option A: Reproject everything to match disturbance_binary (EPSG:3035)
-# This is recommended as it's the native CRS for European data
 
 Biomass2010_reprojected <- project(Biomass2010_cropped[[1]],
                                    disturbance_binary,
@@ -196,14 +193,14 @@ EEA_forest_type_aligned <- rast('Data/EEA_forest_type_alignedczechia.tif')
 
 
 
-
 # Step 3: Now mask biomass by disturbance
-biomass_undisturbed <- mask(Biomass2010_aligned, 
-                          undisturbed, 
+biomass_disturbed <- mask(Biomass2010_aligned, 
+                          disturbance_binary, 
                           maskvalues = c(0, NA))
 
+
 # Step 4: Stack and extract values
-biomass_forest_stack <- c(biomass_undisturbed[[1]], EEA_forest_type_aligned)
+biomass_forest_stack <- c(biomass_disturbed[[1]], EEA_forest_type_aligned)
 names(biomass_forest_stack) <- c("biomass", "forest_type")
 
 
@@ -315,125 +312,43 @@ biomass_hex_dt[, forest_type_label := fcase(
 cat("Total valid pixels across all hexagons:", nrow(biomass_hex_dt), "\n")
 cat("Number of hexagons with data:", length(unique(biomass_hex_dt$hex_id)), "\n")
 
-fwrite(biomass_hex_dt, "Data/biomassczechia_by_hexagon_completeUndisturbed.csv")
+fwrite(biomass_hex_dt, "Data/biomassczechia_by_hexagon_completeDisturbed.csv")
 
-
-# 2. Summary statistics by hexagon and forest type
-hex_summary <- biomass_hex_dt[, .(
-  n_pixels = .N,
-  mean_biomass = mean(biomass),
-  median_biomass = median(biomass),
-  sd_biomass = sd(biomass),
-  min_biomass = min(biomass),
-  max_biomass = max(biomass)
-  # total_biomass = sum(biomass)
-), by = .(hex_ID, forest_type_label)]
-
-fwrite(hex_summary, "Data/biomassczechia_by_hexagon_summaryUndisturbed.csv")
-
-
-# 3. Summary by hexagon (all forest types combined)
-hex_summary_total <- biomass_hex_dt[, .(
-  n_pixels = .N,
-  mean_biomass = mean(biomass),
-  median_biomass = median(biomass),
-  # total_biomass = sum(biomass),
-  n_broadleaf = sum(forest_type == 1),
-  n_needleleaf = sum(forest_type == 2),
-  n_mixed = sum(forest_type == 3)
-), by = hex_ID]
-
-fwrite(hex_summary_total, "Data/biomassczechia_by_hexagon_totalUndisturbed.csv")
-
-# 4. Merge summary back to spatial hexagons for mapping
-Hex_with_biomass <- merge(Hex_czechia, hex_summary_total, by = "hex_ID", all.x = TRUE)
-Hex_with_biomass <- Hex_with_biomass |> select(-hex_id)
-
-st_write(Hex_with_biomass, "Data/gridczechia_forest_with_biomassUndisturbed.gpkg", delete_dsn = TRUE)
-
-Hex_with_biomass2 <- merge(Hex_czechia, hex_summary, by = "hex_ID", all.x = TRUE)
-
-Hex_with_biomass2 <- Hex_with_biomass2 |> select(-hex_id)
-st_write(Hex_with_biomass2, "Data/gridczechia_forest_with_biomassTypeUndisturbed.gpkg", delete_dsn = TRUE)
-
-# ============================================================================
-# Example visualizations
-# ============================================================================
 # 
-# # Plot density for an example hexagon
-# example_hex_ID <- 25#10
-# biomass_df_hex <- as.data.frame(biomass_hex_dt[hex_ID == example_hex_ID])
+# # 2. Summary statistics by hexagon and forest type
+# hex_summary <- biomass_hex_dt[, .(
+#   n_pixels = .N,
+#   mean_biomass = mean(biomass),
+#   median_biomass = median(biomass),
+#   sd_biomass = sd(biomass),
+#   min_biomass = min(biomass),
+#   max_biomass = max(biomass)
+#   # total_biomass = sum(biomass)
+# ), by = .(hex_ID, forest_type_label)]
 # 
-# if(nrow(biomass_df_hex) > 0) {
-#   p_hex <- ggplot(biomass_df_hex, aes(x = biomass, fill = forest_type_label)) +
-#     geom_density(alpha = 0.5) +
-#     labs(title = paste("Biomass Distribution - Hexagon", example_hex_ID),
-#          subtitle = paste("n =", format(nrow(biomass_df_hex), big.mark = ",")),
-#          x = "Biomass (Mg/ha)", y = "Density", fill = "Forest Type") +
-#     theme_minimal() +
-#     scale_fill_manual(values = c("Broadleaf" = "#2E7D32", 
-#                                  "Needleleaf" = "#1565C0", 
-#                                  "Mixed Forest" = "orange"))
-#   
-#   print(p_hex)
-#   ggsave("Data/example_hexagon_biomass_densityUndisturbed.png", p_hex, width = 8, height = 5)
-# }
-# 
-# # Create map of total biomass by hexagon
-# library(tmap)
-# 
-# map_biomass <- tm_shape(Hex_with_biomass) +
-#   tm_fill("mean_biomass", 
-#           style = "quantile",
-#           palette = "YlOrRd",
-#           title = "Mean Biomass\n(Mg/ha)") +
-#   tm_borders(alpha = 0.3) +
-#   tm_layout(title = "Total Unisturbed Biomass by Hexagon",
-#             legend.outside = TRUE)
-# 
-# print(map_biomass)
-# tmap_save(map_biomass, "Data/biomass_by_hexagon_mapUndisturbed.png", width = 10, height = 8)
+# fwrite(hex_summary, "Data/biomassczechia_by_hexagon_summaryUndisturbed.csv")
 # 
 # 
-# Hex_with_biomass2 <- Hex_with_biomass2 |> 
-#   # remove NA
-#   filter(!is.na(mean_biomass))
-# # Filter for only Broadleaf and Needleleaf
-# Hex_two_types <- Hex_with_biomass2 %>%
-#   filter(forest_type_label %in% c("Broadleaf", "Needleleaf", "Mixed Forest"))
+# # 3. Summary by hexagon (all forest types combined)
+# hex_summary_total <- biomass_hex_dt[, .(
+#   n_pixels = .N,
+#   mean_biomass = mean(biomass),
+#   median_biomass = median(biomass),
+#   # total_biomass = sum(biomass),
+#   n_broadleaf = sum(forest_type == 1),
+#   n_needleleaf = sum(forest_type == 2),
+#   n_mixed = sum(forest_type == 3)
+# ), by = hex_ID]
 # 
-# # Create faceted map
-# map_biomass_two_facets <- tm_shape(Hex_two_types) +
-#   tm_fill("mean_biomass", 
-#           style = "quantile",
-#           palette = "YlOrRd",
-#           title = "Mean Biomass\n(Mg/ha)") +
-#   tm_borders(alpha = 0.3) +
-#   tm_facets(by = "forest_type_label", 
-#             nrow = 1,
-#             free.coords = FALSE) +
-#   tm_layout(title = "Total Unisturbed Biomass: Broadleaf vs Needleleaf",
-#             legend.outside = TRUE,
-#             panel.labels = c("Broadleaf", "Needleleaf", "Mixed Forest"))
+# fwrite(hex_summary_total, "Data/biomassczechia_by_hexagon_totalUndisturbed.csv")
 # 
-# print(map_biomass_two_facets)
-# tmap_save(map_biomass_two_facets, "Data/biomass_broadleaf_needleleaf_mapUndisturbed.png", 
-#           width = 12, height = 6)
+# # 4. Merge summary back to spatial hexagons for mapping
+# Hex_with_biomass <- merge(Hex_czechia, hex_summary_total, by = "hex_ID", all.x = TRUE)
+# Hex_with_biomass <- Hex_with_biomass |> select(-hex_id)
 # 
+# st_write(Hex_with_biomass, "Data/gridczechia_forest_with_biomassUndisturbed.gpkg", delete_dsn = TRUE)
 # 
+# Hex_with_biomass2 <- merge(Hex_czechia, hex_summary, by = "hex_ID", all.x = TRUE)
 # 
-# # Optional: Create faceted plots by forest type
-# p_facet <- ggplot(as.data.frame(hex_summary), 
-#                   aes(x = mean_biomass, fill = forest_type_label)) +
-#   geom_histogram(bins = 50, alpha = 0.7) +
-#   facet_wrap(~forest_type_label, scales = "free_y") +
-#   labs(title = "Distribution of Mean Biomass Across Hexagons",
-#        x = "Mean Biomass (Mg/ha)", y = "Number of Hexagons",
-#        fill = "Forest Type") +
-#   theme_minimal() +
-#   scale_fill_manual(values = c("Broadleaf" = "#2E7D32", 
-#                                "Needleleaf" = "#1565C0", 
-#                                "Mixed Forest" = "orange"))
-# 
-# print(p_facet)
-# ggsave("Data/hexagon_biomass_distribution_facetedUndisturbed.png", p_facet, width = 12, height = 6)
+# Hex_with_biomass2 <- Hex_with_biomass2 |> select(-hex_id)
+# st_write(Hex_with_biomass2, "Data/gridczechia_forest_with_biomassTypeUndisturbed.gpkg", delete_dsn = TRUE)
