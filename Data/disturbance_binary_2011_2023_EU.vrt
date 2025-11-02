@@ -1,0 +1,104 @@
+<VRTDataset rasterXSize="132636" rasterYSize="129807">
+  <SRS dataAxisToSRSAxisMapping="2,1">PROJCS["ETRS89-extended / LAEA Europe",GEOGCS["ETRS89",DATUM["European_Terrestrial_Reference_System_1989",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6258"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4258"]],PROJECTION["Lambert_Azimuthal_Equal_Area"],PARAMETER["latitude_of_center",52],PARAMETER["longitude_of_center",10],PARAMETER["false_easting",4321000],PARAMETER["false_northing",3210000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Northing",NORTH],AXIS["Easting",EAST],AUTHORITY["EPSG","3035"]]</SRS>
+  <GeoTransform>  2.5704731839276869e+06,  3.0000000000000007e+01,  0.0000000000000000e+00,  5.4363557867462318e+06,  0.0000000000000000e+00, -3.0000000000000000e+01</GeoTransform>
+  <VRTRasterBand dataType="Float32" band="1">
+    <NoDataValue>nan</NoDataValue>
+    <ColorInterp>Gray</ColorInterp>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//norway/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="49199" RasterYSize="52409" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="49199" ySize="52409" />
+      <DstRect xOff="42600.1836900386" yOff="0" xSize="49199" ySize="52409" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//poland/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="25613" RasterYSize="24506" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="25613" ySize="24506" />
+      <DstRect xOff="66638.0310064389" yOff="60825.007465021" xSize="25613" ySize="24506" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//portugal/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="15377" RasterYSize="20087" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="15377" ySize="20087" />
+      <DstRect xOff="0" yOff="103856.496647653" xSize="15377" ySize="20087" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//romania/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="26680" RasterYSize="20589" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="26680" ySize="20589" />
+      <DstRect xOff="83595.9029672185" yOff="82231.3493865509" xSize="26680" ySize="20589" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//serbia/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="13047" RasterYSize="17376" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="13047" ySize="17376" />
+      <DstRect xOff="81070.7757651453" yOff="92922.2892517208" xSize="13047" ySize="17376" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//slovakia/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="14837" RasterYSize="8781" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="14837" ySize="8781" />
+      <DstRect xOff="74618.3988983845" yOff="80573.0873231371" xSize="14837" ySize="8781" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//slovenia/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="8887" RasterYSize="6294" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="8887" ySize="6294" />
+      <DstRect xOff="66817.5815012588" yOff="92422.3666339653" xSize="8887" ySize="6294" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//spain/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="38999" RasterYSize="34968" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="38999" ySize="34968" />
+      <DstRect xOff="3871.33065145643" yOff="94838.5945927017" xSize="38999" ySize="34968" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//sweden/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="30805" RasterYSize="52899" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="30805" ySize="52899" />
+      <DstRect xOff="54823.5120487338" yOff="9198.19532630158" xSize="30805" ySize="52899" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//switzerland/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="12788" RasterYSize="9050" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="12788" ySize="9050" />
+      <DstRect xOff="47272.6788321231" yOff="89112.2629226827" xSize="12788" ySize="9050" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//ukraine/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="46861" RasterYSize="34715" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="46860.6016532709" ySize="34715" />
+      <DstRect xOff="85775.3983467291" yOff="61760.6759525981" xSize="46860.6016532709" ySize="34715" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//unitedkingdom/disturbance_binary_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="28124" RasterYSize="39561" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="28124" ySize="39561" />
+      <DstRect xOff="16071.014449874" yOff="39873.5267407824" xSize="28124" ySize="39561" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+</VRTDataset>

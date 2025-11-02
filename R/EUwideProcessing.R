@@ -1,3 +1,4 @@
+library(tidyverse)
 library(terra)
 library(sf)
 library(data.table)
@@ -30,19 +31,11 @@ print(undisturbed_eu_vrt)
 library(sf)
 library(data.table)
 
-# Load other datasets as VRTs (biomass, forest type, etc.)
-biomass_files <- list.files(base_dir, 
-                            pattern = "biomass.*\\.tif$", 
-                            recursive = TRUE, 
-                            full.names = TRUE)
+# Load 
+biomass_vrt <- rast('Data/ESACCI-BIOMASS-L4-AGB-MERGED-100m-2010-fv6.0.nc')
+forest_type_vrt <- rast('Data/FTY_2015_100m_eu_03035_d02_Full/FTY_2015_100m_eu_03035_d02_full.tif')
 
-forest_type_files <- list.files(base_dir, 
-                                pattern = "forest_type.*\\.tif$", 
-                                recursive = TRUE, 
-                                full.names = TRUE)
-
-biomass_vrt <- vrt(biomass_files, "Data/biomass_EU.vrt", overwrite = TRUE)
-forest_type_vrt <- vrt(forest_type_files, "Data/forest_type_EU.vrt", overwrite = TRUE)
+biomass_vrt <- biomass_vrt[[1]]
 
 # Stack all together
 eu_stack <- c(biomass_vrt, undisturbed_eu_vrt, forest_type_vrt)

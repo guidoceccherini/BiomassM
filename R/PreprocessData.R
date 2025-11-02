@@ -1,7 +1,8 @@
 library(terra)
-
+library(tidyverse)
 # Set your base directory containing all country folders
-base_dir <- "Data/"
+
+base_dir <- "/home/cecchgu/Downloads/13333034/"
 
 # Get all country folders
 country_folders <- list.dirs(base_dir, recursive = FALSE, full.names = TRUE)
