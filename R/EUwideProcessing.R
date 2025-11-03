@@ -238,99 +238,6 @@ for(i in 1:nrow(Hex_EU)) {
                                        eu_stack)
 }
 
-# 
-# 
-# # alternatives1
-# library(future.apply)
-# library(data.table)
-# 
-# # Setup parallelizzazione
-# plan(multisession, workers = availableCores() - 1)  # lascia 1 core libero
-# 
-# # Dividi gli hexagoni in gruppi (uno per core)
-# n_cores <- availableCores() - 1
-# hex_groups <- split(1:nrow(Hex_EU), cut(1:nrow(Hex_EU), n_cores, labels = FALSE))
-# 
-# # Funzione per processare un gruppo di hexagoni
-# process_hex_group <- function(hex_indices, hex_sf, raster_stack) {
-#   library(terra)
-#   library(data.table)
-#   
-#   group_results <- vector("list", length(hex_indices))
-#   
-#   for(i in seq_along(hex_indices)) {
-#     idx <- hex_indices[i]
-#     
-#     tryCatch({
-#       hex_vals <- extract(raster_stack, hex_sf[idx, ], ID = FALSE)
-#       dt <- data.table(hex_vals)
-#       
-#       # Filter
-#       dt <- dt[!is.na(undisturbed) & undisturbed == 1 & 
-#                  !is.na(biomass) & biomass > 0 &
-#                  !is.na(forest_type) & forest_type %in% c(1, 2, 3)]
-#       
-#       if(nrow(dt) > 0) {
-#         dt[, hex_ID := hex_sf$hex_ID[idx]]
-#         group_results[[i]] <- dt
-#       }
-#     }, error = function(e) NULL)
-#   }
-#   
-#   return(rbindlist(group_results[!sapply(group_results, is.null)]))
-# }
-# 
-# # Esegui in parallelo
-# cat("Processing", nrow(Hex_EU), "hexagons in parallel on", n_cores, "cores...\n")
-# 
-# all_results <- future_lapply(
-#   hex_groups,
-#   process_hex_group,
-#   hex_sf = Hex_EU,
-#   raster_stack = eu_stack,
-#   future.seed = TRUE
-# )
-# 
-# # Combina i risultati
-# final_dt <- rbindlist(all_results)
-# 
-# # Chiudi parallelizzazione
-# plan(sequential)
-# 
-# 
-# # alternatives2
-# 
-# library(exactextractr)
-# library(data.table)
-# 
-# # Converti eu_stack in raster di raster package se necessario
-# # o usa direttamente con terra
-# 
-# # Estrai tutto in una volta (molto più veloce)
-# biomass_vals <- exact_extract(Biomass2010_aligned, Hex_EU, include_cols = "hex_ID")
-# undisturbed_vals <- exact_extract(undisturbed_eu_vrt, Hex_EU, include_cols = "hex_ID")
-# forest_type_vals <- exact_extract(EEA_forest_type_aligned, Hex_EU, include_cols = "hex_ID")
-# 
-# # Combina e filtra
-# process_exact_extract <- function(i) {
-#   dt <- data.table(
-#     biomass = biomass_vals[[i]]$value,
-#     undisturbed = undisturbed_vals[[i]]$value,
-#     forest_type = forest_type_vals[[i]]$value,
-#     hex_ID = Hex_EU$hex_ID[i]
-#   )
-#   
-#   dt <- dt[!is.na(undisturbed) & undisturbed == 1 & 
-#              !is.na(biomass) & biomass > 0 &
-#              !is.na(forest_type) & forest_type %in% c(1, 2, 3)]
-#   
-#   return(dt)
-# }
-# 
-# all_results <- lapply(1:nrow(Hex_EU), process_exact_extract)
-# final_dt <- rbindlist(all_results[!sapply(all_results, is.null)])
-# 
-
 
 
 
@@ -354,10 +261,123 @@ cat("Hexagons with data:", length(unique(biomass_hex_dt$hex_ID)), "\n")
 
 
 
-# OPTION PARALLEL PROCESSING (uncomment to use)
-# library(future.apply)
-# plan(multisession, workers = 4)  # Use 4 cores
-# 
-# all_results <- future_lapply(1:nrow(Hex_EU), function(i) {
-#   extract_hex_data(Hex_EU$hex_ID[i], Hex_EU[i, ], eu_stack)
-# }, future.seed = TRUE)
+# alternative for ram with cropping
+
+chunk_size <- 1000
+n_chunks <- ceiling(nrow(Hex_EU) / chunk_size)
+all_results <- list()
+
+
+for(i in 1:n_chunks) {
+  cat(sprintf("[%s] Chunk %d/%d\n", Sys.time(), i, n_chunks))
+  
+  start_idx <- (i-1) * chunk_size + 1
+  end_idx <- min(i * chunk_size, nrow(Hex_EU))
+  hex_chunk <- Hex_EU[start_idx:end_idx, ]
+  
+  chunk_bbox <- st_bbox(hex_chunk)
+  chunk_ext <- ext(chunk_bbox[c("xmin", "xmax", "ymin", "ymax")])
+  buffer <- 10000
+  chunk_ext_buffered <- chunk_ext + buffer
+  eu_stack_cropped <- crop(eu_stack, chunk_ext_buffered)
+  
+  # Use a function that preserves hex_ID from include_cols
+  chunk_result <- exact_extract(eu_stack_cropped, hex_chunk, 
+                                fun = function(df) {
+                                  dt <- as.data.table(df)
+                                  
+                                  # hex_ID is included in df due to include_cols
+                                  hex_id <- dt$hex_ID[1]  # All rows have same hex_ID
+                                  
+                                  dt <- dt[!is.na(undisturbed) & undisturbed == 1 & 
+                                             !is.na(biomass) & biomass > 0 &
+                                             !is.na(forest_type) & forest_type %in% c(1, 2, 3)]
+                                  
+                                  if(nrow(dt) == 0) return(data.table())
+                                  
+                                  stats <- dt[, .(
+                                    mean_biomass = mean(biomass),
+                                    median_biomass = median(biomass),
+                                    q25_biomass = quantile(biomass, 0.25),
+                                    q75_biomass = quantile(biomass, 0.75),
+                                    n_pixels = .N
+                                  ), by = forest_type]
+                                  
+                                  stats[, hex_ID := hex_id]
+                                  return(stats)
+                                },
+                                include_cols = "hex_ID",
+                                summarize_df = TRUE,
+                                max_cells_in_memory = 5e7)
+  
+  all_results[[i]] <- chunk_result
+  rm(eu_stack_cropped, chunk_result)
+  gc()
+}
+
+final_data <- rbindlist(all_results)
+
+write_csv(final_data, "Data/biomass_EU_by_hexagon_undisturbed_v2.csv")
+
+
+
+
+# same for disturbed
+eu_stack <- c(Biomass2010_aligned, disturbance_eu_vrt, EEA_forest_type_aligned)
+names(eu_stack) <- c("biomass", "undisturbed", "forest_type")
+
+chunk_size <- 1000
+n_chunks <- ceiling(nrow(Hex_EU) / chunk_size)
+all_results <- list()
+
+
+for(i in 1:n_chunks) {
+  cat(sprintf("[%s] Chunk %d/%d\n", Sys.time(), i, n_chunks))
+  
+  start_idx <- (i-1) * chunk_size + 1
+  end_idx <- min(i * chunk_size, nrow(Hex_EU))
+  hex_chunk <- Hex_EU[start_idx:end_idx, ]
+  
+  chunk_bbox <- st_bbox(hex_chunk)
+  chunk_ext <- ext(chunk_bbox[c("xmin", "xmax", "ymin", "ymax")])
+  buffer <- 10000
+  chunk_ext_buffered <- chunk_ext + buffer
+  eu_stack_cropped <- crop(eu_stack, chunk_ext_buffered)
+  
+  # Use a function that preserves hex_ID from include_cols
+  chunk_result <- exact_extract(eu_stack_cropped, hex_chunk, 
+                                fun = function(df) {
+                                  dt <- as.data.table(df)
+                                  
+                                  # hex_ID is included in df due to include_cols
+                                  hex_id <- dt$hex_ID[1]  # All rows have same hex_ID
+                                  
+                                  dt <- dt[!is.na(undisturbed) & undisturbed == 1 & 
+                                             !is.na(biomass) & biomass > 0 &
+                                             !is.na(forest_type) & forest_type %in% c(1, 2, 3)]
+                                  
+                                  if(nrow(dt) == 0) return(data.table())
+                                  
+                                  stats <- dt[, .(
+                                    mean_biomass = mean(biomass),
+                                    median_biomass = median(biomass),
+                                    q25_biomass = quantile(biomass, 0.25),
+                                    q75_biomass = quantile(biomass, 0.75),
+                                    n_pixels = .N
+                                  ), by = forest_type]
+                                  
+                                  stats[, hex_ID := hex_id]
+                                  return(stats)
+                                },
+                                include_cols = "hex_ID",
+                                summarize_df = TRUE,
+                                max_cells_in_memory = 5e7)
+  
+  all_results[[i]] <- chunk_result
+  rm(eu_stack_cropped, chunk_result)
+  gc()
+}
+
+final_data <- rbindlist(all_results)
+
+write_csv(final_data, "Data/biomass_EU_by_hexagon_disturbed_v2.csv")
