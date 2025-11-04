@@ -1,0 +1,312 @@
+<VRTDataset rasterXSize="132636" rasterYSize="134919">
+  <SRS dataAxisToSRSAxisMapping="2,1">PROJCS["ETRS89-extended / LAEA Europe",GEOGCS["ETRS89",DATUM["European_Terrestrial_Reference_System_1989",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6258"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4258"]],PROJECTION["Lambert_Azimuthal_Equal_Area"],PARAMETER["latitude_of_center",52],PARAMETER["longitude_of_center",10],PARAMETER["false_easting",4321000],PARAMETER["false_northing",3210000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Northing",NORTH],AXIS["Easting",EAST],AUTHORITY["EPSG","3035"]]</SRS>
+  <GeoTransform>  2.5704731839276869e+06,  3.0000000000000000e+01,  0.0000000000000000e+00,  5.4363557867462318e+06,  0.0000000000000000e+00, -3.0000000000000000e+01</GeoTransform>
+  <VRTRasterBand dataType="Float32" band="1">
+    <NoDataValue>nan</NoDataValue>
+    <ColorInterp>Gray</ColorInterp>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//albania/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="6309" RasterYSize="11706" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="6309" ySize="11706" />
+      <DstRect xOff="83682.099499675" yOff="106571.886864652" xSize="6309" ySize="11706" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//andorra/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="1149" RasterYSize="971" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="1149" ySize="971" />
+      <DstRect xOff="34744.9515537831" yOff="107396.771975957" xSize="1149" ySize="971" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//austria/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="20375" RasterYSize="12267" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="20375" ySize="12267" />
+      <DstRect xOff="56504.2942479012" yOff="84146.7189970099" xSize="20375" ySize="12267" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//belarus/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="23094" RasterYSize="20793" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="23094" ySize="20793" />
+      <DstRect xOff="86003.5928063733" yOff="52494.5821222345" xSize="23094" ySize="20793" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//belgium/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="9390" RasterYSize="9084" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="9390" ySize="9084" />
+      <DstRect xOff="40803.3130047328" yOff="74900.2340465048" xSize="9390" ySize="9084" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//bosniaherzegovina/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="11441" RasterYSize="11473" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="11441" ySize="11473" />
+      <DstRect xOff="73275.2601523764" yOff="97338.3809654603" xSize="11441" ySize="11473" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//bulgaria/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="18037" RasterYSize="13319" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="18037" ySize="13319" />
+      <DstRect xOff="91144.7109095482" yOff="97558.8974058215" xSize="18037" ySize="13319" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//croatia/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="17336" RasterYSize="17518" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="17336" ySize="17518" />
+      <DstRect xOff="67016.1337772793" yOff="92633.1050055694" xSize="17336" ySize="17518" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//czechia/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="17117" RasterYSize="11527" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="17117" ySize="11527" />
+      <DstRect xOff="62988.0174422545" yOff="75968.5130642997" xSize="17117" ySize="11527" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//denmark/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="16264" RasterYSize="14051" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="16264" ySize="14051" />
+      <DstRect xOff="53251.2259737069" yOff="51695.3889519647" xSize="16264" ySize="14051" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//estonia/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="12960" RasterYSize="9413" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="12960" ySize="9413" />
+      <DstRect xOff="80583.0971162125" yOff="41847.6688892314" xSize="12960" ySize="9413" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//finland/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="26291" RasterYSize="40997" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="26291" ySize="40997" />
+      <DstRect xOff="70077.1187728337" yOff="2954.609009712" xSize="26291" ySize="40997" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//france/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="36500" RasterYSize="42736" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="36500" ySize="42736" />
+      <DstRect xOff="21189.0857055568" yOff="75013.1059516241" xSize="36500" ySize="42736" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//germany/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="25248" RasterYSize="32021" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="25248" ySize="32021" />
+      <DstRect xOff="46649.3094863739" yOff="60986.533854708" xSize="25248" ySize="32021" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//greece/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="28584" RasterYSize="28563" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="28584" ySize="28563" />
+      <DstRect xOff="84962.9133236321" yOff="106355.729165632" xSize="28584" ySize="28563" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//hungary/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="18289" RasterYSize="12761" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="18289" ySize="12761" />
+      <DstRect xOff="73077.8534497594" yOff="84200.9763881844" xSize="18289" ySize="12761" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//ireland/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="13649" RasterYSize="13641" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="13649" ySize="13641" />
+      <DstRect xOff="10810.8508166494" yOff="57149.203182746" xSize="13649" ySize="13641" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//italy/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="35265" RasterYSize="42900" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="35265" ySize="42900" />
+      <DstRect xOff="48813.1359164373" yOff="90199.5063492106" xSize="35265" ySize="42900" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//latvia/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="16046" RasterYSize="10666" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="16046" ySize="10666" />
+      <DstRect xOff="79894.6385624286" yOff="47539.296987338" xSize="16046" ySize="10666" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//liechtenstein/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="541" RasterYSize="873" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="541" ySize="873" />
+      <DstRect xOff="56914.9760809664" yOff="91712.8993925389" xSize="541" ySize="873" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//lithuania/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="13632" RasterYSize="11220" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="13632" ySize="11220" />
+      <DstRect xOff="80802.1423974724" yOff="53935.4030965723" xSize="13632" ySize="11220" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//luxembourg/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="2251" RasterYSize="3031" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="2251" ySize="3031" />
+      <DstRect xOff="47938.0162846294" yOff="80563.2331537793" xSize="2251" ySize="3031" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//macedonia/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="7796" RasterYSize="6586" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="7796" ySize="6586" />
+      <DstRect xOff="87051.4814881747" yOff="106811.573386857" xSize="7796" ySize="6586" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//moldova/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="10932" RasterYSize="12179" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="10932" ySize="12179" />
+      <DstRect xOff="98951.372594961" yOff="81106.0366700064" xSize="10932" ySize="12179" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//montenegro/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="6001" RasterYSize="6990" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="6001" ySize="6990" />
+      <DstRect xOff="80999.7040709675" yOff="103534.966847782" xSize="6001" ySize="6990" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//netherlands/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="11332" RasterYSize="11373" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="11332" ySize="11373" />
+      <DstRect xOff="42002.70357961" yOff="68007.9373246366" xSize="11332" ySize="11373" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//norway/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="49199" RasterYSize="52409" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="49199" ySize="52409" />
+      <DstRect xOff="42600.1836900386" yOff="0" xSize="49199" ySize="52409" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//poland/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="25613" RasterYSize="24506" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="25613" ySize="24506" />
+      <DstRect xOff="66638.0310064389" yOff="60825.007465021" xSize="25613" ySize="24506" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//portugal/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="15377" RasterYSize="20087" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="15377" ySize="20087" />
+      <DstRect xOff="0" yOff="103856.496647653" xSize="15377" ySize="20087" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//romania/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="26680" RasterYSize="20589" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="26680" ySize="20589" />
+      <DstRect xOff="83595.9029672186" yOff="82231.3493865509" xSize="26680" ySize="20589" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//serbia/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="13047" RasterYSize="17376" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="13047" ySize="17376" />
+      <DstRect xOff="81070.7757651453" yOff="92922.2892517208" xSize="13047" ySize="17376" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//slovakia/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="14837" RasterYSize="8781" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="14837" ySize="8781" />
+      <DstRect xOff="74618.3988983845" yOff="80573.0873231371" xSize="14837" ySize="8781" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//slovenia/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="8887" RasterYSize="6294" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="8887" ySize="6294" />
+      <DstRect xOff="66817.5815012588" yOff="92422.3666339653" xSize="8887" ySize="6294" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//spain/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="38999" RasterYSize="34968" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="38999" ySize="34968" />
+      <DstRect xOff="3871.33065145643" yOff="94838.5945927017" xSize="38999" ySize="34968" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//sweden/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="30805" RasterYSize="52899" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="30805" ySize="52899" />
+      <DstRect xOff="54823.5120487338" yOff="9198.19532630158" xSize="30805" ySize="52899" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//switzerland/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="12788" RasterYSize="9050" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="12788" ySize="9050" />
+      <DstRect xOff="47272.6788321231" yOff="89112.2629226827" xSize="12788" ySize="9050" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//ukraine/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="46861" RasterYSize="34715" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="46860.6016532709" ySize="34715" />
+      <DstRect xOff="85775.3983467291" yOff="61760.6759525981" xSize="46860.6016532709" ySize="34715" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="0">/home/cecchgu/Downloads/13333034//unitedkingdom/agent_2011_2023.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="28124" RasterYSize="39561" DataType="Float32" BlockXSize="256" BlockYSize="256" />
+      <SrcRect xOff="0" yOff="0" xSize="28124" ySize="39561" />
+      <DstRect xOff="16071.014449874" yOff="39873.5267407824" xSize="28124" ySize="39561" />
+      <NODATA>nan</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+</VRTDataset>

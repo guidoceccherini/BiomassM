@@ -103,9 +103,9 @@ Hex_EU <- st_read('Data/grid_forest.gpkg')
 Hex_EU <- Hex_EU|> dplyr::filter(forest_count >0)
 
 # Reproject if needed
-if(st_crs(Hex_EU) != st_crs(eu_stack)) {
-  Hex_EU <- st_transform(Hex_EU, st_crs(eu_stack))
-}
+# if(st_crs(Hex_EU) != st_crs(eu_stack)) {
+#   Hex_EU <- st_transform(Hex_EU, st_crs(eu_stack))
+# }
 
 # Add hex ID
 if(!"hex_ID" %in% names(Hex_EU)) {
@@ -126,3 +126,142 @@ Hex_EU_biomass_ratio <- Hex_EU_biomass_ratio |> dplyr::select(-hex_ID)
 st_write(Hex_EU_biomass_ratio, "Data/Hexs/Hex_EU_biomass_ratioUndisturbed.gpkg", delete_dsn = TRUE)
 
 # fwrite(hex_summary, "Data/biomass_by_hexagon_summaryUndisturbed.csv")
+
+library(ggplot2)
+library(tidyr)
+library(sf)
+library(scales)
+
+# Trasforma i dati in formato long
+Hex_EU_biomass_ratio_long <- Hex_EU_biomass_ratio %>%
+  pivot_longer(
+    cols = c(ratio_1, ratio_2, ratio_3),
+    names_to = "ratio_type",
+    values_to = "ratio_value"
+  )
+
+# Crea il plot con colorscale orizzontale e limiti
+ggplot(Hex_EU_biomass_ratio_long) +
+  geom_sf(aes(fill = ratio_value), color = NA) +
+  scale_fill_gradient2(
+    low = "#d73027",        # rosso per valori sotto 1
+    mid = "#ffffbf",        # giallo/bianco per 1
+    high = "#1a9850",       # verde per valori sopra 1
+    midpoint = 1,
+    limits = c(0.9, 1.1),   # limiti della scala
+    oob = squish,           # squish comprime i valori fuori range
+    na.value = "grey90",
+    name = "Ratio",
+    guide = guide_colorbar(
+      direction = "horizontal",  # colorbar orizzontale
+      title.position = "top",    # titolo sopra la barra
+      title.hjust = 0.5,         # centra il titolo
+      barwidth = 15,             # larghezza della barra
+      barheight = 0.8            # altezza della barra
+    )
+  ) +
+  facet_wrap(~ ratio_type, ncol = 3) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank(),
+    legend.position = "bottom"  # posizione legenda in basso
+  ) +
+  labs(
+    title = "Biomass Ratios across Europe",
+    x = NULL,
+    y = NULL
+  )
+
+
+
+
+library(ggplot2)
+library(tidyr)
+library(sf)
+
+# Trasforma i dati UND in formato long
+Hex_EU_biomass_UND_long <- Hex_EU_biomass_ratio %>%
+  pivot_longer(
+    cols = c(UND_1, UND_2, UND_3),
+    names_to = "UND_type",
+    values_to = "UND_value"
+  )
+
+# Crea il plot con scala Viridis
+ggplot(Hex_EU_biomass_UND_long) +
+  geom_sf(aes(fill = UND_value), color = NA) +
+  scale_fill_viridis_c(
+    option = "viridis",      # opzioni: "viridis", "magma", "plasma", "inferno", "cividis"
+    na.value = "grey90",
+    name = "Biomass",
+    guide = guide_colorbar(
+      direction = "horizontal",
+      title.position = "top",
+      title.hjust = 0.5,
+      barwidth = 15,
+      barheight = 0.8
+    )
+  ) +
+  facet_wrap(~ UND_type, ncol = 3) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank(),
+    legend.position = "bottom"
+  ) +
+  labs(
+    title = "Biomass (UND) across Europe",
+    x = NULL,
+    y = NULL
+  )
+
+
+
+
+# 
+# library(ggplot2)
+# library(tidyr)
+# library(sf)
+
+
+# now for degraded
+
+# Trasforma i dati DEG in formato long
+Hex_EU_biomass_DEG_long <- Hex_EU_biomass_ratio %>%
+  pivot_longer(
+    cols = c(DEG_1, DEG_2, DEG_3),
+    names_to = "DEG_type",
+    values_to = "DEG_value"
+  )
+
+# Crea il plot con scala Viridis
+ggplot(Hex_EU_biomass_DEG_long) +
+  geom_sf(aes(fill = DEG_value), color = NA) +
+  scale_fill_viridis_c(
+    option = "viridis",      # opzioni: "viridis", "magma", "plasma", "inferno", "cividis"
+    na.value = "grey90",
+    name = "Biomass",
+    guide = guide_colorbar(
+      direction = "horizontal",
+      title.position = "top",
+      title.hjust = 0.5,
+      barwidth = 15,
+      barheight = 0.8
+    )
+  ) +
+  facet_wrap(~ DEG_type, ncol = 3) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid = element_blank(),
+    legend.position = "bottom"
+  ) +
+  labs(
+    title = "Biomass (DEG) across Europe",
+    x = NULL,
+    y = NULL
+  )
