@@ -369,26 +369,30 @@ for(i in 1:n_chunks) {
       if (nrow(dt) == 0) return(data.table())
       
       stats <- dt[, {
-        # Compute distribution moments
-        m <- mean(biomass)
-        v <- var(biomass)
-        s <- skewness(biomass, na.rm = TRUE, type = 2)
-        k <- kurtosis(biomass, na.rm = TRUE, type = 2)
+        n <- .N
         
-        # Anderson–Darling test for normality (fallback if too few points)
-        p_norm <- if (.N >= 8) nortest::ad.test(biomass)$p.value else NA_real_
+        # Compute only if enough observations
+        if (n >= 3) {
+          m <- mean(biomass)
+          v <- var(biomass)
+          s <- tryCatch(e1071::skewness(biomass, na.rm = TRUE, type = 2), error = function(e) NA_real_)
+          k <- tryCatch(e1071::kurtosis(biomass, na.rm = TRUE, type = 2), error = function(e) NA_real_)
+        } else {
+          m <- v <- s <- k <- NA_real_
+        }
+        
+        # Normality test only if enough samples
+        p_norm <- if (n >= 8) tryCatch(nortest::ad.test(biomass)$p.value, error = function(e) NA_real_) else NA_real_
         
         .(mean_biomass = m,
           median_biomass = median(biomass),
-          q5_biomass = quantile(biomass, 0.05),
-          q95_biomass = quantile(biomass, 0.95),
           q25_biomass = quantile(biomass, 0.25),
           q75_biomass = quantile(biomass, 0.75),
           var_biomass = v,
           skew_biomass = s,
           kurt_biomass = k,
           p_normality = p_norm,
-          n_pixels = .N)
+          n_pixels = n)
       }, by = forest_type]
       
       stats[, hex_ID := hex_id]
@@ -508,27 +512,31 @@ for(i in 1:n_chunks) {
                                   if(nrow(dt) == 0) return(data.table())
                                   
                                   stats <- dt[, {
-                                    # Compute distribution moments
-                                    m <- mean(biomass)
-                                    v <- var(biomass)
-                                    s <- skewness(biomass, na.rm = TRUE, type = 2)
-                                    k <- kurtosis(biomass, na.rm = TRUE, type = 2)
+                                    n <- .N
                                     
-                                    # Anderson–Darling test for normality (fallback if too few points)
-                                    p_norm <- if (.N >= 8) nortest::ad.test(biomass)$p.value else NA_real_
+                                    # Compute only if enough observations
+                                    if (n >= 3) {
+                                      m <- mean(biomass)
+                                      v <- var(biomass)
+                                      s <- tryCatch(e1071::skewness(biomass, na.rm = TRUE, type = 2), error = function(e) NA_real_)
+                                      k <- tryCatch(e1071::kurtosis(biomass, na.rm = TRUE, type = 2), error = function(e) NA_real_)
+                                    } else {
+                                      m <- v <- s <- k <- NA_real_
+                                    }
+                                    
+                                    # Normality test only if enough samples
+                                    p_norm <- if (n >= 8) tryCatch(nortest::ad.test(biomass)$p.value, error = function(e) NA_real_) else NA_real_
                                     
                                     .(mean_biomass = m,
                                       median_biomass = median(biomass),
-                                      q5_biomass = quantile(biomass, 0.05),
-                                      q95_biomass = quantile(biomass, 0.95),
                                       q25_biomass = quantile(biomass, 0.25),
                                       q75_biomass = quantile(biomass, 0.75),
                                       var_biomass = v,
                                       skew_biomass = s,
                                       kurt_biomass = k,
                                       p_normality = p_norm,
-                                      n_pixels = .N)
-                                  },by = .(forest_type)]
+                                      n_pixels = n)
+                                  }, by = forest_type]
                                   
                                   stats[, hex_ID := hex_id]
                                   return(stats)
