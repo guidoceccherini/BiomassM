@@ -50,3 +50,6 @@ EEA_forest_type_cropped_EU.tif
 EEA_forest_type_alignedEU.tif
 biomass_EU_by_hexagon_undisturbed_v2.csv
 biomass_EU_by_hexagon_disturbed_v2.csv
+biomass_EU_by_hexagon_disturbed_vNoHarvest2.csv
+biomass_EU_by_hexagon_undisturbed_vNoHarvest.csv
+biomass_EU_by_hexagon_undisturbed_vNoHarvest2.csv

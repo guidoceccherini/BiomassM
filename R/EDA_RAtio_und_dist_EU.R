@@ -16,10 +16,9 @@ library(terra)
 library(data.table)
 
 
-
 biomass_hex_UND <- read_csv("Data/biomass_EU_by_hexagon_undisturbed_v2.csv")
 
-biomass_hex_DIST <- read_csv("Data/biomass_EU_by_hexagon_disturbed_v2.csv")
+biomass_hex_DIST <- read_csv("Data/biomass_EU_by_hexagon_disturbed_vNoHarvest2.csv")
 
 setDT(biomass_hex_UND)
 setDT(biomass_hex_DIST)
@@ -74,24 +73,24 @@ hex_summary
 
 hex_summary_ratio <- hex_summary %>%
   filter(n_pixels >= 30) %>%
-  select(hex_ID, forest_type, mean_biomass, disturbance_status) %>%
+  dplyr::select(hex_ID, forest_type, mean_biomass, disturbance_status) %>%
   pivot_wider(names_from = disturbance_status, values_from = mean_biomass) %>%
   mutate(biomass_ratio_DIST_UND = Disturbed / Undisturbed)
 
 
 # make hex_summary_ratio wider to get forest type in wide format
 hex_summary_ratio_wide <- hex_summary_ratio %>%
-  select(hex_ID, forest_type, biomass_ratio_DIST_UND) %>%
+  dplyr::select(hex_ID, forest_type, biomass_ratio_DIST_UND) %>%
   pivot_wider(names_from = forest_type, values_from = biomass_ratio_DIST_UND, names_prefix = "ratio_")
 
 
 # make hex_summary_ratio wider to get forest type in wide format
 hex_summary_Undisturbed_wide <- hex_summary_ratio %>%
-  select(hex_ID, forest_type, Undisturbed) %>%
+  dplyr::select(hex_ID, forest_type, Undisturbed) %>%
   pivot_wider(names_from = forest_type, values_from = Undisturbed, names_prefix = "UND_")
 
 hex_summary_Disturbed_wide <- hex_summary_ratio %>%
-  select(hex_ID, forest_type, Disturbed) %>%
+  dplyr::select(hex_ID, forest_type, Disturbed) %>%
   pivot_wider(names_from = forest_type, values_from = Disturbed, names_prefix = "DIST_")
 
 
@@ -230,16 +229,16 @@ ggplot(Hex_EU_biomass_UND_long) +
 # now for degraded
 
 # Trasforma i dati DEG in formato long
-Hex_EU_biomass_DEG_long <- Hex_EU_biomass_ratio %>%
+Hex_EU_biomass_DIST_long <- Hex_EU_biomass_ratio %>%
   pivot_longer(
-    cols = c(DEG_1, DEG_2, DEG_3),
-    names_to = "DEG_type",
-    values_to = "DEG_value"
+    cols = c(DIST_1, DIST_2, DIST_3),
+    names_to = "DIST_type",
+    values_to = "DIST_value"
   )
 
 # Crea il plot con scala Viridis
-ggplot(Hex_EU_biomass_DEG_long) +
-  geom_sf(aes(fill = DEG_value), color = NA) +
+ggplot(Hex_EU_biomass_DIST_long) +
+  geom_sf(aes(fill = DIST_value), color = NA) +
   scale_fill_viridis_c(
     option = "viridis",      # opzioni: "viridis", "magma", "plasma", "inferno", "cividis"
     na.value = "grey90",
@@ -252,7 +251,7 @@ ggplot(Hex_EU_biomass_DEG_long) +
       barheight = 0.8
     )
   ) +
-  facet_wrap(~ DEG_type, ncol = 3) +
+  facet_wrap(~ DIST_type, ncol = 3) +
   theme_minimal() +
   theme(
     axis.text = element_blank(),
@@ -265,3 +264,4 @@ ggplot(Hex_EU_biomass_DEG_long) +
     x = NULL,
     y = NULL
   )
+

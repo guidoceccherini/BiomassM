@@ -275,7 +275,8 @@ if(!"hex_ID" %in% names(Hex_EU)) {
 # alternative for ram with cropping
 library(exactextractr)
 
-
+library(e1071)     # for skewness, kurtosis
+library(nortest) 
 # 
 # chunk_size <- 1000
 # n_chunks <- ceiling(nrow(Hex_EU) / chunk_size)
@@ -354,36 +355,49 @@ for(i in 1:n_chunks) {
   chunk_ext_buffered <- chunk_ext + buffer
   eu_stack_cropped <- crop(eu_stack, chunk_ext_buffered)
   
-  # Use a function that preserves hex_ID from include_cols
-  chunk_result <- exact_extract(eu_stack_cropped, hex_chunk, 
-                                fun = function(df) {
-                                  dt <- as.data.table(df)
-                                  
-                                  # hex_ID is included in df due to include_cols
-                                  hex_id <- dt$hex_ID[1]  # All rows have same hex_ID
-                                  
-                                  dt <- dt[!is.na(undisturbed) & undisturbed == 1 & 
-                                             !is.na(biomass) & biomass > 0 &
-                                             !is.na(forest_type) & forest_type %in% c(1, 2, 3)
-                                             # !is.na(drivers) & drivers %in% c(1, 2)
-                                           ]
-                                  
-                                  if(nrow(dt) == 0) return(data.table())
-                                  
-                                  stats <- dt[, .(
-                                    mean_biomass = mean(biomass),
-                                    median_biomass = median(biomass),
-                                    q25_biomass = quantile(biomass, 0.25),
-                                    q75_biomass = quantile(biomass, 0.75),
-                                    n_pixels = .N
-                                  ), by = forest_type]
-                                  
-                                  stats[, hex_ID := hex_id]
-                                  return(stats)
-                                },
-                                include_cols = "hex_ID",
-                                summarize_df = TRUE,
-                                max_cells_in_memory = 5e7)
+  chunk_result <- exact_extract(
+    eu_stack_cropped, hex_chunk,
+    fun = function(df) {
+      dt <- as.data.table(df)
+      hex_id <- dt$hex_ID[1]
+      
+      dt <- dt[
+        !is.na(undisturbed) & undisturbed == 1 &
+          !is.na(biomass) & biomass > 0 &
+          !is.na(forest_type) & forest_type %in% c(1, 2, 3)
+      ]
+      if (nrow(dt) == 0) return(data.table())
+      
+      stats <- dt[, {
+        # Compute distribution moments
+        m <- mean(biomass)
+        v <- var(biomass)
+        s <- skewness(biomass, na.rm = TRUE, type = 2)
+        k <- kurtosis(biomass, na.rm = TRUE, type = 2)
+        
+        # Anderson–Darling test for normality (fallback if too few points)
+        p_norm <- if (.N >= 8) nortest::ad.test(biomass)$p.value else NA_real_
+        
+        .(mean_biomass = m,
+          median_biomass = median(biomass),
+          q5_biomass = quantile(biomass, 0.05),
+          q95_biomass = quantile(biomass, 0.95),
+          q25_biomass = quantile(biomass, 0.25),
+          q75_biomass = quantile(biomass, 0.75),
+          var_biomass = v,
+          skew_biomass = s,
+          kurt_biomass = k,
+          p_normality = p_norm,
+          n_pixels = .N)
+      }, by = forest_type]
+      
+      stats[, hex_ID := hex_id]
+      stats
+    },
+    include_cols = "hex_ID",
+    summarize_df = TRUE,
+    max_cells_in_memory = 5e7
+  )
   
   all_results[[i]] <- chunk_result
   rm(eu_stack_cropped, chunk_result)
@@ -392,7 +406,7 @@ for(i in 1:n_chunks) {
 
 final_data <- rbindlist(all_results)
 
-write_csv(final_data, "Data/biomass_EU_by_hexagon_undisturbed_vNoHarvest2.csv")
+write_csv(final_data, "Data/biomass_EU_by_hexagon_undisturbed_vNoHarvestDistributions.csv")
 
 
 
@@ -493,13 +507,28 @@ for(i in 1:n_chunks) {
                                   
                                   if(nrow(dt) == 0) return(data.table())
                                   
-                                  stats <- dt[, .(
-                                    mean_biomass = mean(biomass),
-                                    median_biomass = median(biomass),
-                                    q25_biomass = quantile(biomass, 0.25),
-                                    q75_biomass = quantile(biomass, 0.75),
-                                    n_pixels = .N
-                                  ), by = .(forest_type)]
+                                  stats <- dt[, {
+                                    # Compute distribution moments
+                                    m <- mean(biomass)
+                                    v <- var(biomass)
+                                    s <- skewness(biomass, na.rm = TRUE, type = 2)
+                                    k <- kurtosis(biomass, na.rm = TRUE, type = 2)
+                                    
+                                    # Anderson–Darling test for normality (fallback if too few points)
+                                    p_norm <- if (.N >= 8) nortest::ad.test(biomass)$p.value else NA_real_
+                                    
+                                    .(mean_biomass = m,
+                                      median_biomass = median(biomass),
+                                      q5_biomass = quantile(biomass, 0.05),
+                                      q95_biomass = quantile(biomass, 0.95),
+                                      q25_biomass = quantile(biomass, 0.25),
+                                      q75_biomass = quantile(biomass, 0.75),
+                                      var_biomass = v,
+                                      skew_biomass = s,
+                                      kurt_biomass = k,
+                                      p_normality = p_norm,
+                                      n_pixels = .N)
+                                  },by = .(forest_type)]
                                   
                                   stats[, hex_ID := hex_id]
                                   return(stats)
@@ -515,4 +544,4 @@ for(i in 1:n_chunks) {
 
 final_data <- rbindlist(all_results)
 
-write_csv(final_data, "Data/biomass_EU_by_hexagon_disturbed_vNoHarvest2.csv")
+write_csv(final_data, "Data/biomass_EU_by_hexagon_disturbed_vNoHarvest2Distributions.csv")
