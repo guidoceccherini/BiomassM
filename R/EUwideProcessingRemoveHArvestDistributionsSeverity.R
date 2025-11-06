@@ -15,6 +15,7 @@ cat("Found", length(country_folders), "country folders\n")
 disturbance_binary_files <- list()
 undisturbed_files <- list()
 agent_files <- list()
+severity_files <- list()
 
 
 
@@ -266,6 +267,13 @@ for(i in 1:n_chunks) {
                                   
                                   if(nrow(dt) == 0) return(data.table())
                                   
+                                  
+                                  dt[, severity_bin := fifelse(severity %in% 1:5, "1-5",
+                                                               fifelse(severity == 6, "6",
+                                                                       fifelse(severity == 7, "7",
+                                                                               fifelse(severity == 8, "8",
+                                                                                       fifelse(severity == 9, "9", "10-11")))))]
+                                  
                                   stats <- dt[, {
                                     n <- .N
                                     
@@ -291,7 +299,7 @@ for(i in 1:n_chunks) {
                                       kurt_biomass = k,
                                       p_normality = p_norm,
                                       n_pixels = n)
-                                  }, by = .(forest_type, severity)]
+                                  }, by = .(forest_type, severity_bin)]
                                   
                                   stats[, hex_ID := hex_id]
                                   return(stats)
