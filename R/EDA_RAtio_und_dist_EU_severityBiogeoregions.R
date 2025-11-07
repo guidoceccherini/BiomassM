@@ -266,3 +266,307 @@ summary_stats <- data_for_plot %>%
 
 print(summary_stats)
 # write_csv(summary_stats, "biomass_ratio_summary_by_region.csv")
+
+
+
+
+
+
+
+
+
+library(tidyverse)
+library(sf)
+library(ggridges)
+library(data.table)
+library(viridis)
+
+# [Previous data processing code remains the same until data_for_plot...]
+
+# ... [all previous code until data_for_plot is created] ...
+
+# ===== FILTER OUT SPARSE CATEGORIES =====
+
+# Calculate sample sizes by region and severity
+sample_sizes <- data_for_plot %>%
+  group_by(code, severity_label) %>%
+  summarise(n = n(), .groups = "drop")
+
+# Identify regions with sufficient data (e.g., > 100 total observations)
+regions_with_data <- sample_sizes %>%
+  group_by(code) %>%
+  summarise(total_n = sum(n), .groups = "drop") %>%
+  filter(total_n > 100) %>%  # Adjust threshold as needed
+  pull(code)
+
+cat("Regions with sufficient data:", paste(regions_with_data, collapse = ", "), "\n")
+
+# Filter data to keep only regions with sufficient data
+data_filtered <- data_for_plot %>%
+  filter(code %in% regions_with_data)
+
+# Also remove severity classes with very few observations per region
+severity_counts <- data_filtered %>%
+  group_by(code, severity_label) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  filter(n >= 20)  # At least 20 observations per severity class
+
+# Keep only severity classes that appear in the filtered data
+data_filtered <- data_filtered %>%
+  semi_join(severity_counts, by = c("code", "severity_label"))
+
+cat("Total observations after filtering:", nrow(data_filtered), "\n")
+
+# ===== PLOT WITH IMPROVED LAYOUT =====
+
+p_classic <- ggplot(data_filtered, aes(x = biomass_ratio, y = severity_label, fill = after_stat(x))) +
+  stat_density_ridges(
+    geom = "density_ridges_gradient",
+    scale = 2.5,
+    rel_min_height = 0.01,
+    bandwidth = 0.02
+  ) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "white", size = 0.5, alpha = 0.7) +
+  scale_fill_gradient2(
+    low = "#d73027",
+    mid = "#ffffbf",
+    high = "#1a9850",
+    midpoint = 1,
+    limits = c(0.7, 1.3),
+    name = "Biomass Ratio",
+    guide = guide_colorbar(
+      barwidth = 25,        # ENLARGED horizontal bar
+      barheight = 1.2,      # TALLER bar
+      title.position = "top",
+      title.hjust = 0.5,
+      frame.colour = "white",
+      ticks.colour = "white"
+    )
+  ) +
+  scale_x_continuous(
+    limits = c(0.7, 1.3), 
+    breaks = seq(0.7, 1.3, 0.1),
+    expand = c(0, 0)
+  ) +
+  facet_wrap(~ code, ncol = 3, scales = "free_y") +  # Adjust ncol based on remaining regions
+  theme_ridges(grid = FALSE) +
+  theme(
+    legend.position = "bottom",
+    legend.box.spacing = unit(0.5, "cm"),
+    legend.margin = margin(t = 10, b = 5),
+    strip.text = element_text(size = 14, face = "bold", color = "white"),
+    axis.text.y = element_text(size = 10, hjust = 1, color = "white"),
+    axis.text.x = element_text(size = 10, color = "white"),
+    axis.title = element_text(size = 12, face = "bold", color = "white"),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold", color = "white", margin = margin(b = 5)),
+    plot.subtitle = element_text(hjust = 0.5, size = 11, color = "white", margin = margin(b = 15)),
+    panel.background = element_rect(fill = "black"),
+    plot.background = element_rect(fill = "black"),
+    strip.background = element_rect(fill = "grey20"),
+    legend.background = element_rect(fill = "black"),
+    legend.text = element_text(color = "white", size = 10),
+    legend.title = element_text(color = "white", size = 11, face = "bold"),
+    panel.spacing = unit(1, "lines")
+  ) +
+  labs(
+    title = "Forest Biomass Recovery Across European Biogeographic Regions",
+    subtitle = "From heavily disturbed to undisturbed forests",
+    x = "Biomass Ratio (Disturbed / Undisturbed)",
+    y = NULL
+  )
+
+print(p_classic)
+ggsave("Figures/joy_division_biomass_filtered.png", p_classic, 
+       width = 14, height = 10, dpi = 300, bg = "black")
+
+
+# ===== ALTERNATIVE: AUTOMATIC FILTERING OF EMPTY SEVERITY CLASSES =====
+
+# Remove severity levels that don't appear in any region
+data_filtered_clean <- data_filtered %>%
+  group_by(severity_label) %>%
+  filter(n() > 50) %>%  # Keep severity classes with at least 50 total observations
+  ungroup() %>%
+  mutate(
+    severity_label = droplevels(severity_label)  # Remove unused factor levels
+  )
+
+p_clean <- ggplot(data_filtered_clean, aes(x = biomass_ratio, y = severity_label, fill = after_stat(x))) +
+  stat_density_ridges(
+    geom = "density_ridges_gradient",
+    scale = 2.8,
+    rel_min_height = 0.01,
+    bandwidth = 0.02
+  ) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "white", size = 0.5, alpha = 0.7) +
+  scale_fill_gradient2(
+    low = "#d73027",
+    mid = "#ffffbf",
+    high = "#1a9850",
+    midpoint = 1,
+    limits = c(0.7, 1.3),
+    name = "Biomass Ratio (Disturbed / Undisturbed)",
+    guide = guide_colorbar(
+      barwidth = 30,        # VERY WIDE horizontal bar
+      barheight = 1.5,      
+      title.position = "top",
+      title.hjust = 0.5,
+      frame.colour = "white",
+      frame.linewidth = 0.5,
+      ticks.colour = "white",
+      ticks.linewidth = 0.5
+    )
+  ) +
+  scale_x_continuous(
+    limits = c(0.7, 1.3), 
+    breaks = seq(0.7, 1.3, 0.1),
+    expand = c(0.01, 0.01)
+  ) +
+  facet_wrap(~ code, ncol = 3) +
+  theme_ridges(grid = FALSE) +
+  theme(
+    legend.position = "bottom",
+    legend.box.spacing = unit(1, "cm"),
+    legend.margin = margin(t = 15, b = 10),
+    strip.text = element_text(size = 15, face = "bold", color = "white"),
+    axis.text.y = element_text(size = 11, hjust = 1, color = "white", face = "bold"),
+    axis.text.x = element_text(size = 11, color = "white"),
+    axis.title = element_text(size = 13, face = "bold", color = "white"),
+    axis.title.x = element_text(margin = margin(t = 15)),
+    plot.title = element_text(hjust = 0.5, size = 18, face = "bold", color = "white", margin = margin(b = 5)),
+    plot.subtitle = element_text(hjust = 0.5, size = 12, color = "white", margin = margin(b = 20)),
+    panel.background = element_rect(fill = "black"),
+    plot.background = element_rect(fill = "black"),
+    plot.margin = margin(20, 20, 20, 20),
+    strip.background = element_rect(fill = "grey20"),
+    legend.background = element_rect(fill = "black"),
+    legend.text = element_text(color = "white", size = 11),
+    legend.title = element_text(color = "white", size = 12, face = "bold"),
+    panel.spacing = unit(1.5, "lines")
+  ) +
+  labs(
+    title = "Forest Biomass Recovery Across European Biogeographic Regions",
+    subtitle = "Distribution of biomass ratios by disturbance severity",
+    x = "Biomass Ratio",
+    y = NULL
+  )
+
+print(p_clean)
+ggsave("Figures/joy_division_biomass_clean.png", p_clean, 
+       width = 15, height = 11, dpi = 300, bg = "black")
+
+
+# Print summary of what was kept
+cat("\n=== DATA SUMMARY ===\n")
+cat("Regions kept:", paste(sort(unique(data_filtered_clean$code)), collapse = ", "), "\n")
+cat("Severity classes kept:", paste(levels(data_filtered_clean$severity_label), collapse = "\n  "), "\n")
+
+summary_final <- data_filtered_clean %>%
+  group_by(code, severity_label) %>%
+  summarise(
+    n = n(),
+    mean_ratio = mean(biomass_ratio, na.rm = TRUE),
+    median_ratio = median(biomass_ratio, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(code, severity_label)
+
+print(summary_final)
+# write_csv(summary_final, "biomass_ratio_summary_filtered.csv")
+# ===== PLOT WITH PROPER BLACK BACKGROUND (NO TRANSPARENCY) =====
+
+p_classic <- ggplot(data_filtered_clean, aes(x = biomass_ratio, y = severity_label, fill = after_stat(x))) +
+  stat_density_ridges(
+    geom = "density_ridges_gradient",
+    scale = 2.8,
+    rel_min_height = 0.01,
+    bandwidth = 0.02,
+    alpha = 1  # Remove transparency
+  ) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "white", size = 0.5, alpha = 1) +
+  scale_fill_gradient2(
+    low = "#d73027",
+    mid = "#ffffbf",
+    high = "#1a9850",
+    midpoint = 1,
+    limits = c(0.7, 1.3),
+    name = "Biomass Ratio (Disturbed / Undisturbed)",
+    guide = guide_colorbar(
+      barwidth = 30,
+      barheight = 1.5,
+      title.position = "top",
+      title.hjust = 0.5,
+      frame.colour = "white",
+      frame.linewidth = 0.5,
+      ticks.colour = "white",
+      ticks.linewidth = 0.5
+    )
+  ) +
+  scale_x_continuous(
+    limits = c(0.7, 1.3), 
+    breaks = seq(0.7, 1.3, 0.1),
+    expand = c(0.01, 0.01)
+  ) +
+  facet_wrap(~ code, ncol = 3) +
+  theme_ridges(grid = FALSE) +
+  theme(
+    legend.position = "bottom",
+    legend.box.spacing = unit(1, "cm"),
+    legend.margin = margin(t = 15, b = 10),
+    strip.text = element_text(size = 15, face = "bold", color = "white"),
+    axis.text.y = element_text(size = 11, hjust = 1, color = "white", face = "bold"),
+    axis.text.x = element_text(size = 11, color = "white"),
+    axis.title = element_text(size = 13, face = "bold", color = "white"),
+    axis.title.x = element_text(margin = margin(t = 15)),
+    plot.title = element_text(hjust = 0.5, size = 18, face = "bold", color = "white", margin = margin(b = 5)),
+    plot.subtitle = element_text(hjust = 0.5, size = 12, color = "white", margin = margin(b = 20)),
+    # CRITICAL: Set all backgrounds to black with no transparency
+    panel.background = element_rect(fill = "black", colour = NA),
+    plot.background = element_rect(fill = "black", colour = NA),
+    plot.margin = margin(20, 20, 20, 20),
+    strip.background = element_rect(fill = "grey20", colour = NA),
+    legend.background = element_rect(fill = "black", colour = NA),
+    legend.box.background = element_rect(fill = "black", colour = NA),
+    legend.key = element_rect(fill = "black", colour = NA),
+    legend.text = element_text(color = "white", size = 11),
+    legend.title = element_text(color = "white", size = 12, face = "bold"),
+    panel.spacing = unit(1.5, "lines"),
+    # Remove any grid lines
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank()
+  ) +
+  labs(
+    title = "Forest Biomass Recovery Across European Biogeographic Regions",
+    subtitle = "Distribution of biomass ratios by disturbance severity",
+    x = "Biomass Ratio",
+    y = NULL
+  )
+
+print(p_classic)
+# Load required library
+library(ragg)  # Better rendering engine
+
+# Save with ragg PNG device (best for black backgrounds)
+ggsave("Figures/joy_division_biomass_clean.png", p_classic, 
+       width = 15, height = 11, dpi = 300, 
+       bg = "black",
+       device = ragg::agg_png)
+
+# Alternative 1: Using standard png device
+ggsave("Figures/joy_division_biomass_clean_standard.png", p_classic, 
+       width = 15, height = 11, dpi = 300, 
+       bg = "black",
+       device = "png")
+
+# Alternative 2: Use CairoPNG if you have the Cairo package
+ggsave("Figures/joy_division_biomass_clean_cairo.png", p_classic, 
+       width = 15, height = 11, dpi = 300, 
+       bg = "black",
+       device = "CairoPNG")  # String format, not function
+
+# Alternative 3: Save as PDF (always works perfectly)
+ggsave("Figures/joy_division_biomass_clean.pdf", p_classic, 
+       width = 15, height = 11,
+       bg = "black",
+       device = "pdf")
