@@ -21,7 +21,7 @@ for(folder in country_folders) {
   
   # Find the disturbances and forest mask files
   agent_file <- list.files(folder, 
-                          pattern = "disturbance_agent_1985_2019.*\\.tif$", 
+                          pattern = "disturbance_agent_1985_2023.*\\.tif$", 
                           full.names = TRUE)
   
   disturbance_binary_file <- list.files(folder,
