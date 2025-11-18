@@ -381,6 +381,71 @@ ggsave("Figures/joy_division_biomass_filtered.png", p_classic,
        width = 14, height = 10, dpi = 300, bg = "black")
 
 
+
+p_classic <- ggplot(data_filtered, aes(x = biomass_ratio, y = severity_label, fill = after_stat(x))) +
+  stat_density_ridges(
+    geom = "density_ridges_gradient",
+    scale = 2.5,
+    rel_min_height = 0.01,
+    bandwidth = 0.02
+  ) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "white", size = 0.5, alpha = 0.7) +
+  scale_fill_gradient2(
+    low = "#d73027",
+    mid = "#ffffbf",
+    high = "#1a9850",
+    midpoint = 1,
+    limits = c(0.7, 1.3),
+    name = "Biomass Ratio",
+    guide = guide_colorbar(
+      barwidth = 25,        # ENLARGED horizontal bar
+      barheight = 1.2,      # TALLER bar
+      title.position = "top",
+      title.hjust = 0.5,
+      frame.colour = "white",
+      ticks.colour = "white"
+    )
+  ) +
+  scale_x_continuous(
+    limits = c(0.7, 1.3), 
+    breaks = seq(0.7, 1.3, 0.1),
+    expand = c(0, 0)
+  ) +
+  facet_grid(forest_type~ code) +  # Adjust ncol based on remaining regions
+  theme_ridges(grid = FALSE) +
+  theme(
+    legend.position = "bottom",
+    legend.box.spacing = unit(0.5, "cm"),
+    legend.margin = margin(t = 10, b = 5),
+    strip.text = element_text(size = 14, face = "bold", color = "white"),
+    axis.text.y = element_text(size = 10, hjust = 1, color = "white"),
+    axis.text.x = element_text(size = 10, color = "white"),
+    axis.title = element_text(size = 12, face = "bold", color = "white"),
+    axis.title.x = element_text(margin = margin(t = 10)),
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold", color = "white", margin = margin(b = 5)),
+    plot.subtitle = element_text(hjust = 0.5, size = 11, color = "white", margin = margin(b = 15)),
+    panel.background = element_rect(fill = "black"),
+    plot.background = element_rect(fill = "black"),
+    strip.background = element_rect(fill = "grey20"),
+    legend.background = element_rect(fill = "black"),
+    legend.text = element_text(color = "white", size = 10),
+    legend.title = element_text(color = "white", size = 11, face = "bold"),
+    panel.spacing = unit(1, "lines")
+  ) +
+  labs(
+    title = "Forest Biomass Recovery Across European Biogeographic Regions",
+    subtitle = "From heavily disturbed to undisturbed forests",
+    x = "Biomass Ratio (Disturbed / Undisturbed)",
+    y = NULL
+  )
+
+print(p_classic)
+ggsave("Figures/joy_division_biomass_filtered2.png", p_classic, 
+       width = 14, height = 10, dpi = 300, bg = "black")
+
+
+
+
 # ===== ALTERNATIVE: AUTOMATIC FILTERING OF EMPTY SEVERITY CLASSES =====
 
 # Remove severity levels that don't appear in any region

@@ -103,3 +103,57 @@ p_combined <- ggplot(data_for_plot, aes(x = mean_biomass/10, y = forest_type, fi
 print(p_combined)
 ggsave("Figures/joy_division_CHUNDdist_by_region_combined.png", p_combined,
        width = 16, height = 10, dpi = 300)
+
+
+
+
+
+# Remove severity levels that don't appear in any region
+data_filtered_clean <- data_for_plot %>%
+  group_by(code) %>%
+  filter(n() > 50) %>%  # Keep severity classes with at least 50 total observations
+  ungroup() 
+
+# %>%
+#   mutate(
+#     severity_label = droplevels(severity_label)  # Remove unused factor levels
+#   )
+
+
+p_combined <- ggplot(data_filtered_clean, aes(x = mean_biomass/10, y = forest_type, fill = as.factor(forest_type))) +
+  stat_density_ridges(
+    aes(height = after_stat(density)),
+    geom = "density_ridges_gradient",
+    scale = 2.5,
+    rel_min_height = 0.01,
+    bandwidth = 0.5,
+    alpha = 0.8
+  ) +
+  geom_vline(xintercept = 1, linetype = "dashed", color = "red", size = 0.5, alpha = 0.7) +
+  scale_fill_viridis_d(
+    # option = "plasma",
+    name = "Forest Type",
+    # breaks = c(1, 2, 3, 4, 5, 6),
+    # labels = c("Very Heavy", "Heavy", "Moderate", "Mild", "Very Mild", "None"),
+    direction = -1  # Reverse so heavy disturbance is darker
+  ) +
+  # scale_x_continuous(limits = c(0, 200)) +
+  facet_wrap(~ code, ncol = 4) +
+  theme_ridges(grid = FALSE) +
+  theme(
+    legend.position = "bottom",
+    strip.text = element_text(size = 12, face = "bold"),
+    axis.text.y = element_text(size = 9, hjust = 1),
+    axis.text.x = element_text(size = 9),
+    axis.title = element_text(size = 11, face = "bold"),
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, size = 10)
+  ) +
+  labs(
+    title = "Canopy Height Across Biogeographic Regions",
+    subtitle = "Distribution of Undisturbed Canopy Height (by forest types)",
+    x = "Canopy Height Undisturbed",
+    y = NULL
+  )
+
+print(p_combined)
