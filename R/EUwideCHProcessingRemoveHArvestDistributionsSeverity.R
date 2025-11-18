@@ -88,6 +88,30 @@ print(undisturbed_eu_vrt)
 
 
 
+
+# Set your directory
+dir_path <- "/home/cecchgu/Downloads/CH_META/"
+
+# Get all .tif files (excluding .aux.xml files)
+tif_files <- list.files(path = dir_path, 
+                        pattern = "\\.tif$", 
+                        full.names = TRUE)
+
+# Create VRT
+vrt_file <- file.path(dir_path, "CH_META_mosaic.vrt")
+v <- vrt(x = tif_files, 
+         filename = vrt_file, 
+         overwrite = TRUE)
+
+# Use the VRT like a normal raster
+plot(v)
+
+
+
+
+
+
+
 library(sf)
 library(data.table)
 
@@ -148,6 +172,83 @@ ref_crs <- crs(disturbance_eu_vrt, proj=TRUE)
 Biomass2010_aligned <- rast("Data/Biomass2010_alignedEU.tif")
 
 
+# same for CH
+
+# Output file
+# output_file <- "Data/CH_META_reprojected.tif"
+# 
+# # Reproject using gdal_utils warp
+# sf::gdal_utils(
+#   util = "warp",
+#   source = vrt_file,
+#   destination = output_file,
+#   options = c(
+#     "-t_srs", ref_crs,
+#     "-te", sprintf("%.6f", ref_ext[1]), sprintf("%.6f", ref_ext[3]),
+#     sprintf("%.6f", ref_ext[2]), sprintf("%.6f", ref_ext[4]),
+#     "-tr", sprintf("%.6f", ref_res[1]), sprintf("%.6f", ref_res[2]),
+#     "-r", "bilinear",
+#     "-multi",
+#     "-wo", "NUM_THREADS=ALL_CPUS",
+#     "-co", "COMPRESS=LZW",
+#     "-co", "TILED=YES",
+#     "-co", "BIGTIFF=YES"
+#   )
+# )
+# 
+# 
+# CH_aligned <- rast("Data/CH_META_reprojected.tif")
+
+output_file <- "Data/CH_META_reprojected2.tif"
+
+# Reproject with 0 values treated as NA
+# sf::gdal_utils(
+#   util = "warp",
+#   source = vrt_file,
+#   destination = output_file,
+#   options = c(
+#     "-srcnodata", "0",           # Treat 0 as nodata in source
+#     "-dstnodata", "nan",          # Set nodata to NaN in output
+#     "-t_srs", ref_crs,
+#     "-te", sprintf("%.6f", ref_ext[1]), sprintf("%.6f", ref_ext[3]),
+#     sprintf("%.6f", ref_ext[2]), sprintf("%.6f", ref_ext[4]),
+#     "-tr", sprintf("%.6f", ref_res[1]), sprintf("%.6f", ref_res[2]),
+#     "-r", "bilinear",
+#     "-multi",
+#     "-wo", "NUM_THREADS=ALL_CPUS",
+#     "-co", "COMPRESS=LZW",
+#     "-co", "TILED=YES",
+#     "-co", "BIGTIFF=YES"
+#   )
+# )
+CH_aligned <- rast("Data/CH_META_reprojected2.tif")
+
+# output_file <- "Data/CH_META_reprojected3.tif"
+# 
+# sf::gdal_utils(
+#   util = "warp",
+#   source = vrt_file,
+#   destination = output_file,
+#   options = c(
+#     "-srcnodata", "0",           # Treat 0 as nodata in source
+#     "-dstnodata", "nan",          # Set nodata to NaN in output
+#     "-ot", "Float32",             # Convert output to Float32
+#     "-t_srs", ref_crs,
+#     "-te", sprintf("%.6f", ref_ext[1]), sprintf("%.6f", ref_ext[3]),
+#     sprintf("%.6f", ref_ext[2]), sprintf("%.6f", ref_ext[4]),
+#     "-tr", sprintf("%.6f", ref_res[1]), sprintf("%.6f", ref_res[2]),
+#     "-r", "bilinear",
+#     "-multi",
+#     "-wo", "NUM_THREADS=ALL_CPUS",
+#     "-co", "COMPRESS=LZW",
+#     "-co", "TILED=YES",
+#     "-co", "BIGTIFF=YES"
+#   )
+# )
+
+
+
+
 ref_ext <- as.vector(ext(disturbance_eu_vrt))
 ref_res <- res(disturbance_eu_vrt)
 
@@ -192,7 +293,7 @@ EEA_forest_type_aligned <- rast("Data/EEA_forest_type_alignedEU.tif")
 #                                     method = "near")
 
 # Verify they now match
-compareGeom(disturbance_eu_vrt, Biomass2010_aligned, EEA_forest_type_aligned)
+compareGeom(disturbance_eu_vrt, CH_aligned, EEA_forest_type_aligned)
 
 
 
@@ -200,7 +301,7 @@ compareGeom(disturbance_eu_vrt, Biomass2010_aligned, EEA_forest_type_aligned)
 
 
 # Stack all together
-eu_stack <- c(Biomass2010_aligned, undisturbed_eu_vrt, EEA_forest_type_aligned)
+eu_stack <- c(CH_aligned, undisturbed_eu_vrt, EEA_forest_type_aligned)
 names(eu_stack) <- c("biomass", "undisturbed", "forest_type" )
 
 # Load EU hexagon grid
@@ -230,7 +331,7 @@ library(nortest)
 # 
 
 # same for disturbed
-eu_stack <- c(Biomass2010_aligned, disturbance_eu_vrt, EEA_forest_type_aligned, agent_eu_vrt, severity_eu_vrt)
+eu_stack <- c(CH_aligned, disturbance_eu_vrt, EEA_forest_type_aligned, agent_eu_vrt, severity_eu_vrt)
 names(eu_stack) <- c("biomass", "undisturbed", "forest_type", "drivers", "severity" )
 
 # 
@@ -320,7 +421,7 @@ write_csv(final_data, "Data/biomass_EU_CH_by_hexagon_disturbed_vNoHarvestSeverit
 
 
 
-eu_stack <- c(biomass_reprojected, undisturbance_100m, EEA_forest_type_cropped)
+eu_stack <- c(CH_aligned, undisturbed_eu_vrt, EEA_forest_type_aligned)
 names(eu_stack) <- c("biomass", "undisturbed", "forest_type" )
 
 
