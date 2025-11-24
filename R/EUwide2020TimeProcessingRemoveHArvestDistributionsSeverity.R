@@ -56,39 +56,9 @@ cat("Processed countries:", length(disturbance_binary_files), "\n")
 cat("\nCreating EU-wide virtual rasters...\n")
 
 # VRT for disturbance binary 2011-2019
-
-# Get all disturbance files
-disturbance_files <- unlist(disturbance_binary_files)
-
-# Build VRT using GDAL command with proper NA handling
-vrt_output <- "Data/disturbance_bin_2008_2019_EU.vrt"
-
-# Create a text file with all input files (GDAL requires this for many files)
-file_list <- "temp_file_list.txt"
-writeLines(disturbance_files, file_list)
-
-# Use gdalbuildvrt with -hidenodata flag
-system2("gdalbuildvrt",
-        args = c(
-          "-hidenodata",  # KEY: Makes nodata transparent in overlaps
-          "-srcnodata", "0",  # Define source nodata value
-          "-vrtnodata", "0",  # Define VRT nodata value
-          "-input_file_list", file_list,  # List of input files
-          vrt_output
-        ),
-        stdout = TRUE, stderr = TRUE)
-
-# Now read and convert to final raster if needed
-disturbance_eu <- rast(vrt_output)
-
-# Optional: write to permanent GeoTIFF
-# writeRaster(disturbance_eu, 
-#             "Data/disturbance_bin_2008_2019_EU.tif",
-#             overwrite = TRUE,
-#             gdal = c("COMPRESS=LZW", "TILED=YES", "BIGTIFF=YES"))
-
-# Clean up
-unlink(file_list)
+disturbance_eu_vrt <- vrt(unlist(disturbance_binary_files), 
+                            "Data/disturbance_binary_2008_2019_EU.vrt", 
+                            overwrite = TRUE)
 
 
 
@@ -147,83 +117,84 @@ threshold_75_fun <- function(x) {
   ifelse(prop_ones >= 0.75, 1, 0)
 }
 
-# Directly resample using disaggregate-aggregate workflow
-# This ensures proper alignment with the reference raster
-# disturbance_100m <- resample(disturbance_eu_vrt, 
-#                              EEA_forest_type_cropped,
-#                              method = "average")
 # 
-# # Apply threshold: keep only pixels where average >= 0.75 (meaning 75% are 1s)
-# disturbance_100m <- ifel(disturbance_100m >= 0.75, 1, 0)
+# system2("gdalwarp", args = c(
+#   "-tr", "100", "100",
+#   "-r", "mode",
+#   "Data/disturbance_binary_2008_2019_EU.vrt",
+#   "Data/disturbance_bin_2008_2019_mode.tif"
+# )) 
 # 
-# # Save result
-# writeRaster(disturbance_100m, "Data/disturbance_100m_threshold75.tif", overwrite = TRUE)
-# disturbance_100m <- rast("Data/disturbance_100m_threshold75.tif")
-# Calculate aggregation factor (30m to 100m = ~3.33x)
-agg_factor <- 100 / 30  # ~3.33, round to 3
+# 
+# # Create a derived VRT with pixel function
+# system2("gdal_calc.py", args = c(
+#   "-A", "Data/disturbance_binary_2008_2019_EU.vrt",
+#   "--outfile=Data/disturbance_bin_2008_2019_binary.tif",
+#   "--calc='numpy.where((A>0) & (A<255), 1, 0)'",
+#   "--NoDataValue=0",
+#   "--type=Byte",
+#   "--co=COMPRESS=LZW",
+#   "--co=TILED=YES",
+#   "--co=BIGTIFF=YES"
+# ))
+# 
+# 
+# system2("gdalwarp", args = c(
+#   "-tr", "100", "100",
+#   "-r", "average",
+#   "-ot", "Float32",
+#   "-srcnodata", "None",  # Don't treat any value as nodata
+#   "-dstnodata", "-9999",  # Set a different nodata for output
+#   "-multi",
+#   "-wm", "2000",
+#   "-co", "COMPRESS=LZW",
+#   "-co", "TILED=YES",
+#   "Data/disturbance_bin_2008_2019_binary.tif",
+#   "Data/disturbance_100m_average.tif"
+# ))
+# 
+# 
+# system2("gdal_calc.py", args = c(
+#   "-A", "Data/disturbance_bin_2008_2019_mode.tif",
+#   "-B", "Data/disturbance_100m_average.tif",
+#   "--outfile=Data/disturbance_mode_filtered_75pct.tif",
+#   "--calc='A*(B>0.75)'",
+#   "--NoDataValue=0",
+#   "--type=Byte",
+#   "--co=COMPRESS=LZW",
+#   "--co=TILED=YES"
+# ))
 
-# Define a custom function to check modal purity
-modal_with_threshold <- function(x, threshold = 0.75) {
-  # Remove NA values
-  x <- x[!is.na(x)]
-  
-  if(length(x) == 0) return(NA)
-  
-  # Find the mode (most common value)
-  tbl <- table(x)
-  modal_value <- as.numeric(names(tbl)[which.max(tbl)])
-  modal_count <- max(tbl)
-  
-  # Calculate purity (proportion of modal value)
-  purity <- modal_count / length(x)
-  
-  # Return modal value only if purity >= threshold, else 0 or NA
-  if(purity >= threshold) {
-    return(modal_value)
-  } else {
-    return(0)  # Or use NA if you prefer
-  }
-}
 
-# Aggregate with purity check
-disturbance_100m <- aggregate(disturbance_eu_vrt, 
-                              fact = round(agg_factor),
-                              fun = function(x) modal_with_threshold(x, threshold = 0.75))
-                              # na.rm = TRUE)
+disturbance_100m<- rast("Data/disturbance_mode_filtered_75pct.tif")
 
-# Then resample to exact alignment if needed
-disturbance_100m <- resample(disturbance_100m, 
-                             EEA_forest_type_cropped,
-                             method = "near")  # Nearest neighbor to preserve values
-
-# same for undisturbed
-# undisturbance_100m <- resample(undisturbed_eu_vrt, 
+# undisturbance_100m <- resample(undisturbed_eu_vrt,
 #                              EEA_forest_type_cropped,
 #                              method = "average")
 # 
 # # Apply threshold: keep only pixels where average >= 0.75 (meaning 75% are 1s)
 # undisturbance_100m <- ifel(undisturbance_100m >= 0.75, 1, 0)
 # 
-# # Save result
 # writeRaster(undisturbance_100m, "Data/undisturbance_100m_threshold75.tif", overwrite = TRUE)
 undisturbance_100m <- rast("Data/undisturbance_100m_threshold75.tif")
 
+
 # same with agent, but in this case use the mode
 
-agent_eu_vrt_100m <- resample(agent_eu_vrt,
-                              EEA_forest_type_cropped,
-                              method = "mode")
-
-writeRaster(agent_eu_vrt_100m, "Data/agent_eu_vrt_100m.tif", overwrite = TRUE)
-agent_eu_vrt_100m <- rast( "Data/agent_eu_vrt_100m.tif")
+# agent_eu_vrt_100m <- resample(agent_eu_vrt,
+#                               EEA_forest_type_cropped,
+#                               method = "mode")
+# 
+# writeRaster(agent_eu_vrt_100m, "Data/agent_eu_vrt_08_19_100m.tif", overwrite = TRUE)
+agent_eu_vrt_100m <- rast( "Data/agent_eu_vrt_08_19_100m.tif")
 # same wwith severity
 
-severity_100m <- resample(severity_eu_vrt,
-                               EEA_forest_type_cropped,
-                               method = "average")
-
-# writeRaster(severity_100m, "Data/severity_100m.tif", overwrite = TRUE)
-severity_100m <- rast("Data/severity_100m.tif")
+# severity_100m <- resample(severity_eu_vrt,
+#                                EEA_forest_type_cropped,
+#                                method = "average")
+# 
+# writeRaster(severity_100m, "Data/severity_08_19_100m.tif", overwrite = TRUE)
+severity_100m <- rast("Data/severity_08_19_100m.tif")
 
 
 
@@ -287,7 +258,10 @@ biomass_reprojected <- rast("Data/biomass_LAEA_100m.tif")
 # Biomass2010_aligned <- rast("Data/Biomass2010_alignedEU.tif")
 
 # Verify they now match
-compareGeom(disturbance_100m, biomass_reprojected, EEA_forest_type_cropped)
+disturbance_aligned <- resample(disturbance_100m, biomass_reprojected, method = "near")
+
+
+compareGeom(disturbance_aligned, biomass_reprojected, EEA_forest_type_cropped)
 
 compareGeom(undisturbance_100m, biomass_reprojected, EEA_forest_type_cropped)
 
@@ -326,13 +300,26 @@ library(nortest)
 # 
 
 # same for disturbed
-eu_stack <- c(biomass_reprojected, disturbance_100m, EEA_forest_type_cropped, agent_eu_vrt_100m, severity_100m)
+eu_stack <- c(biomass_reprojected, disturbance_aligned, EEA_forest_type_cropped, agent_eu_vrt_100m, severity_100m)
 names(eu_stack) <- c("biomass", "undisturbed", "forest_type", "drivers", "severity" )
 
 # 
 chunk_size <- 1000
 n_chunks <- ceiling(nrow(Hex_EU) / chunk_size)
 all_results <- list()
+
+
+
+# explaination of values 1 to 4 for disturbed:
+
+# Value 1: Disturbance detected in years 1-3 (earliest period, bands 24-26)
+# 
+# Value 2: Disturbance detected in years 4-6 (bands 27-29), with no disturbance in years 1-3
+# 
+# Value 3: Disturbance detected in years 7-9 (bands 30-32), with no disturbance in earlier periods
+# 
+# Value 4: Disturbance detected in years 10-12 (bands 33-35), with no disturbance in earlier periods
+
 
 
 for(i in 1:n_chunks) {

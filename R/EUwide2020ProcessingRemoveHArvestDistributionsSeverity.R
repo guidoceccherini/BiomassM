@@ -30,7 +30,7 @@ for(folder in country_folders) {
   output_dist <- file.path(folder, "disturbance_binary_2011_2019.tif")
   output_undist <- file.path(folder, "undisturbed.tif")
   output_agent <- file.path(folder, "agent_2011_2019.tif")
-  output_severity <- file.path(folder, "severity_2011_2019.tif")
+  output_severity <- file.path(folder, "severity_2011_2019_c.tif")
   
  
   
@@ -71,8 +71,8 @@ agent_eu_vrt <- vrt(unlist(agent_files),
                           overwrite = TRUE)
 
 # VRT for agent severity forests
-severity_eu_vrt <- vrt(unlist(severity_files), 
-                    "Data/severity_EU.vrt", 
+severity_eu_vrt_c <- vrt(unlist(severity_files), 
+                    "Data/severity_EU_c.vrt", 
                     overwrite = TRUE)
 
 
@@ -148,12 +148,12 @@ undisturbance_100m <- rast("Data/undisturbance_100m_threshold75.tif")
 agent_eu_vrt_100m <- rast( "Data/agent_eu_vrt_100m.tif")
 # same wwith severity
 
-# severity_100m <- resample(severity_eu_vrt, 
-#                                EEA_forest_type_cropped,
-#                                method = "average")
-# 
-# writeRaster(severity_100m, "Data/severity_100m.tif", overwrite = TRUE)
-severity_100m <- rast("Data/severity_100m.tif")
+severity_100m <- resample(severity_eu_vrt_c,
+                               EEA_forest_type_cropped,
+                               method = "average")
+
+writeRaster(severity_100m, "Data/severity_100m_c.tif", overwrite = TRUE)
+severity_100m <- rast("Data/severity_100m_c.tif")
 
 
 
@@ -289,16 +289,17 @@ for(i in 1:n_chunks) {
                                   dt <- dt[!is.na(undisturbed) & undisturbed == 1 & 
                                              !is.na(biomass) & biomass > 0 &
                                              !is.na(forest_type) & forest_type %in% c(1, 2, 3)&
-                                             !is.na(drivers) & drivers %in% c(1, 2)]
+                                             !is.na(drivers) & drivers %in% c(1, 2)&
+                                             !is.na(severity)]
                                   
                                   if(nrow(dt) == 0) return(data.table())
                                   
                                   
-                                  dt[, severity_bin := fifelse(severity %in% 1:5, "1-5",
-                                                               fifelse(severity == 6, "6",
-                                                                       fifelse(severity == 7, "7",
-                                                                               fifelse(severity == 8, "8",
-                                                                                       fifelse(severity == 9, "9", "10-11")))))]
+                                  # dt[, severity_bin := fifelse(severity %in% 1:5, "1-5",
+                                  #                              fifelse(severity == 6, "6",
+                                  #                                      fifelse(severity == 7, "7",
+                                  #                                              fifelse(severity == 8, "8",
+                                  #                                                      fifelse(severity == 9, "9", "10-11")))))]
                                   
                                   stats <- dt[, {
                                     n <- .N
@@ -318,6 +319,8 @@ for(i in 1:n_chunks) {
                                     
                                     .(mean_biomass = m,
                                       median_biomass = median(biomass),
+                                      mean_severity = mean(severity),
+                                      median_severity = median(severity),
                                       q25_biomass = quantile(biomass, 0.25),
                                       q75_biomass = quantile(biomass, 0.75),
                                       var_biomass = v,
@@ -325,7 +328,7 @@ for(i in 1:n_chunks) {
                                       kurt_biomass = k,
                                       p_normality = p_norm,
                                       n_pixels = n)
-                                  }, by = .(forest_type, severity_bin)]
+                                  }, by = .(forest_type)]
                                   
                                   stats[, hex_ID := hex_id]
                                   return(stats)
@@ -341,7 +344,7 @@ for(i in 1:n_chunks) {
 
 final_data <- rbindlist(all_results)
 
-write_csv(final_data, "Data/biomass_EU_2020_NoHarvest2DistributionSeverity.csv")
+write_csv(final_data, "Data/biomass_EU_2020_Severity_C.csv")
 
 
 
